@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "988240714544",
+    "project_id": "nathn-expense-tracker-00",
+    "storage_bucket": "nathn-expense-tracker-00.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988240714544:android:bcef1b4180f7a3d58406f5",
+        "android_client_info": {
+          "package_name": "com.example.expense_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq9_MuFHFPRdhSc54L-n5yGe108oW3EcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
