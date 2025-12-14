@@ -24,52 +24,70 @@ class AuthNotifier extends Notifier<AuthState> {
   // ====== Actions ======
 
   Future<void> login(String email, String password) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final result = await _loginUseCase(LoginParams(email, password));
 
-    final result = await _loginUseCase(LoginParams(email, password));
-
-    result.fold(
-      (failure) => state = state.copyWith(
+      result.fold(
+        (failure) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: failure.message,
+        ),
+        (user) => state = state.copyWith(isLoading: false, user: user),
+      );
+    } catch (e) {
+      state = state.copyWith(
         isLoading: false,
-        errorMessage: failure.message,
-      ),
-      (user) => state = state.copyWith(isLoading: false, user: user),
-    );
+        errorMessage: "Login failed. Please try again.",
+      );
+    }
   }
 
   Future<void> register(String email, String password) async {
     state = state.copyWith(isLoading: true);
+    try {
+      final result = await _registerUseCase(RegisterParams(email, password));
 
-    final result = await _registerUseCase(RegisterParams(email, password));
-
-    result.fold(
-      (failure) => state = state.copyWith(
+      result.fold(
+        (failure) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: failure.message,
+        ),
+        (_) async {
+          state = state.copyWith(isLoading: false);
+          // Send verification email
+          final verifyResult = await _sendEmailVerificationUseCase();
+          verifyResult.fold(
+            (failure) => state = state.copyWith(errorMessage: failure.message),
+            (message) => state = state.copyWith(successMessage: message),
+          );
+        },
+      );
+    } catch (e) {
+      state = state.copyWith(
         isLoading: false,
-        errorMessage: failure.message,
-      ),
-      (_) async {
-        state = state.copyWith(isLoading: false);
-        // Send verification email
-        final verifyResult = await _sendEmailVerificationUseCase();
-        verifyResult.fold(
-          (failure) => state = state.copyWith(errorMessage: failure.message),
-          (message) => state = state.copyWith(successMessage: message),
-        );
-      },
-    );
+        errorMessage: "Registration failed. Please try again.",
+      );
+    }
   }
 
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
+    try {
+      final result = await _logoutUseCase(NoParams());
 
-    final result = await _logoutUseCase(NoParams());
-
-    result.fold(
-      (failure) => state = state.copyWith(
+      result.fold(
+        (failure) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: failure.message,
+        ),
+        (_) => state = AuthState.initial(),
+      );
+    } catch (e) {
+      state = state.copyWith(
         isLoading: false,
-        errorMessage: failure.message,
-      ),
-      (_) => state = AuthState.initial(),
-    );
+        errorMessage: "Logout failed. Please try again.",
+      );
+    }
   }
 }

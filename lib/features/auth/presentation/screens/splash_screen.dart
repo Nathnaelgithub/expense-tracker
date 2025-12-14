@@ -13,26 +13,23 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
-  void initState() {
-    super.initState();
-
-    /// Listen for auth state changes and redirect accordingly.
-    ref.listen(authNotifierProvider, (previous, next) {
-      // If user is logged in → go to home
-      if (next.user != null) {
-        context.go('/home'); // adjust if your home route is different
-      }
-
-      // If user is NOT logged in → go to login
-      if (next.user == null && !next.isLoading) {
-        context.go('/login');
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Listen for auth state changes and redirect accordingly.
+      ref.listen(authNotifierProvider, (previous, next) {
+        // If user is logged in → go to home
+        if (next.user != null) {
+          context.go('/home');
+        }
+
+        // If user is NOT logged in → go to login
+        if (next.user == null && !next.isLoading) {
+          context.go('/login');
+        }
+      });
+    });
 
     return Scaffold(
       body: Center(

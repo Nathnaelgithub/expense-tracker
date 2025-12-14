@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:expense_tracker/core/errors/failures.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:expense_tracker/features/auth/domain/entities/user_entity.dart';
 import 'package:expense_tracker/features/auth/domain/repositories/auth_repository.dart';
@@ -34,6 +35,8 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
       return Right(userModel);
+    } on FirebaseAuthException catch (e) {
+      return Left(LoginFailure(e.message ?? "Invalid email or password"));
     } catch (e) {
       return Left(LoginFailure(e.toString()));
     }

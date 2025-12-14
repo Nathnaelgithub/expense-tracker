@@ -27,26 +27,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    ref.listen<AuthState>(authNotifierProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
-      }
-
-      // Navigate automatically on successful registration
-      if (next.user != null && prev?.user != next.user) {
-        context.go("/home");
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listen<AuthState>(authNotifierProvider, (prev, next) {
+        if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+        }
+
+        // Navigate automatically on successful registration
+        if (next.user != null && prev?.user != next.user) {
+          context.go("/home");
+        }
+      });
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text("Create Account")),

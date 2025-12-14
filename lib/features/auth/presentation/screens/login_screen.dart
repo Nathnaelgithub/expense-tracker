@@ -35,26 +35,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    ref.listen<AuthState>(authNotifierProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
-      }
-
-      // When login succeeds
-      if (next.user != null && prev?.user?.id != next.user?.id) {
-        context.go("/home");
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listen<AuthState>(authNotifierProvider, (prev, next) {
+        // Show error messages
+        if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+        }
+
+        // when login is successful, navigate to home
+        if (next.user != null && prev?.user?.id != next.user?.id) {
+          context.go("/home");
+        }
+      });
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text("Login")),
