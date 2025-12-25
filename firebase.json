@@ -1,1 +1,56 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"nathn-expense-tracker-00","appId":"1:988240714544:android:bcef1b4180f7a3d58406f5","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"nathn-expense-tracker-00","configurations":{"ios":"1:988240714544:ios:cb9c204640d892948406f5"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "nathn-expense-tracker-00",
+          "appId": "1:988240714544:android:bcef1b4180f7a3d58406f5",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "nathn-expense-tracker-00",
+          "configurations": {
+            "ios": "1:988240714544:ios:cb9c204640d892948406f5"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "auth": {
+      "host": "0.0.0.0",
+      "port": 9099
+    },
+    "firestore": {
+      "host": "0.0.0.0",
+      "port": 8080
+    },
+    "storage": {
+      "host": "0.0.0.0",
+      "port": 9199
+    },
+    "ui": {
+      "host": "0.0.0.0",
+      "enabled": true
+    },
+    "singleProjectMode": true,
+    "database": {
+      "host": "0.0.0.0",
+      "port": 9000
+    }
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}

@@ -27,10 +27,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       final loggingIn =
           state.matchedLocation == '/login' ||
-          state.matchedLocation == '/signup';
+          state.matchedLocation == '/signup' ||
+          state.matchedLocation == '/';
 
       if (!loggedIn && !loggingIn) return '/login';
-      if (loggedIn && loggingIn) return '/home';
+      if (loggedIn && state.matchedLocation == '/login') return '/home';
 
       return null;
     },
@@ -59,17 +60,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const HomeScreen(),
         routes: [
           GoRoute(
-            path: 'add-expense',
+            path: '/add-expense',
             name: 'add-expense',
             builder: (context, state) => const AddExpenseScreen(),
           ),
           GoRoute(
-            path: 'dashboard',
+            path: '/dashboard',
             name: 'dashboard',
             builder: (context, state) => const DashboardScreen(),
           ),
           GoRoute(
-            path: 'view-expense',
+            path: '/view-expense',
             name: 'view-expense',
             builder: (context, state) {
               final expense = state.extra as ExpenseEntity?;

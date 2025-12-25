@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // ------------------------------
@@ -23,20 +24,25 @@ import 'features/expenses/domain/usecases/add_expense_usecase.dart';
 import 'features/expenses/domain/usecases/get_expenses_usecase.dart';
 import 'features/expenses/domain/usecases/get_summary_usecase.dart';
 
+import 'package:flutter/foundation.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
+  debugPrint('➡ Registering Auth dependencies...');
+
   // ------------------------------
   // Firebase
   // ------------------------------
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton<FirebaseDatabase>(() => FirebaseDatabase.instance);
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
 
   // ------------------------------
   // Auth Datasource
   // ------------------------------
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(sl<FirebaseAuth>()),
+    () => AuthRemoteDataSourceImpl(sl<FirebaseAuth>(), sl<FirebaseDatabase>()),
   );
 
   // ------------------------------
@@ -61,6 +67,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<SendEmailVerificationUseCase>(
     () => SendEmailVerificationUseCase(sl<AuthRepository>()),
   );
+
+  debugPrint('➡ Registering Expense dependencies...');
 
   // ------------------------------
   // Expense Datasource
@@ -90,4 +98,6 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<GetSummaryUseCase>(
     () => GetSummaryUseCase(sl<ExpenseRepository>()),
   );
+
+  debugPrint('✅ GetIt initialized');
 }

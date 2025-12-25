@@ -6,6 +6,7 @@ import 'package:expense_tracker/features/auth/domain/entities/user_entity.dart';
 import 'package:expense_tracker/features/auth/domain/repositories/auth_repository.dart';
 
 import 'package:expense_tracker/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:expense_tracker/core/config/app_env.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -29,7 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
   ) async {
     try {
       final userModel = await remoteDataSource.login(email, password);
-      if (!userModel.emailVerified) {
+      if (AppEnv.shouldVerifyEmail && !userModel.emailVerified) {
         return Left(
           LoginFailure("Email not verified. Please verify your email."),
         );

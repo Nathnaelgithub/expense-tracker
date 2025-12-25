@@ -1,0 +1,30 @@
+{
+  // ===== Flutter / Dart =====
+  "editor.formatOnSave": true,
+  "dart.flutterHotReloadOnSave": true,
+  "dart.previewFlutterUiGuides": true,
+  "dart.showInspectorNotificationsForWidgetErrors": true,
+
+  // Auto-fix & formatting
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+
+  // Clean files
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // Better readability
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+
+  // Assets & imports
+  "dart.enableSdkFormatter": true,
+
+  // Firebase / JS (Cloud Functions)
+  "eslint.validate": ["javascript", "typescript"],
+  "prettier.enable": true,
+
+  // UI
+  "workbench.iconTheme": "material-icon-theme"
+}

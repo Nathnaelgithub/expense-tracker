@@ -15,6 +15,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final _searchCtrl = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +40,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
     final expenseState = ref.watch(expenseNotifierProvider);
+    final user = authState.user;
+
+    final userName = user?.name?.trim().isNotEmpty == true
+        ? user!.name!
+        : user?.displayName?.trim().isNotEmpty == true
+        ? user!.displayName!
+        : user?.email.split('@').first ?? 'User';
+
+    final filteredExpenses = expenseState.expenses.where((expense) {
+      return expense.title.toLowerCase().contains(_query) ||
+          expense.amount.toString().contains(_query);
+    }).toList();
+
+    final expenses = _query.isEmpty ? expenseState.expenses : filteredExpenses;
 
     // Navigate to login if user is logged out
     ref.listen<AuthState>(authNotifierProvider, (prev, next) {
@@ -47,8 +70,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Dashboard"),
+        backgroundColor: Colors.brown.shade700,
+        toolbarHeight: 48,
+        elevation: 0,
         actions: [
           IconButton(
             onPressed: _logout,
@@ -57,6 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
+
       body: RefreshIndicator(
         onRefresh: () async {
           await ref.read(expenseNotifierProvider.notifier).loadExpenses();
@@ -66,16 +93,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Greeting and user info
+              // User Greeting
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Hello, ${authState.user?.email ?? 'User'}",
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        "Your Financial Snapshot",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  Icon(Icons.account_circle, size: 40),
+                  const Icon(Icons.account_circle, size: 40),
                 ],
+              ),
+              const SizedBox(height: 20),
+
+              // Search Bar
+              TextField(
+                controller: _searchCtrl,
+                onChanged: (value) {
+                  setState(() {
+                    _query = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: "Search expenses",
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -105,12 +169,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               // Expenses List
               Expanded(
-                child: expenseState.expenses.isEmpty
-                    ? const Center(child: Text("No expenses yet"))
+                child: expenses.isEmpty
+                    ? Center(
+                        child: Text(
+                          _query.isEmpty
+                              ? "No expenses yet"
+                              : "No matching expenses",
+                        ),
+                      )
                     : ListView.builder(
-                        itemCount: expenseState.expenses.length,
+                        itemCount: expenses.length,
                         itemBuilder: (context, index) {
-                          final expense = expenseState.expenses[index];
+                          final expense = expenses[index];
                           return ExpenseTile(expense: expense);
                         },
                       ),
@@ -121,7 +191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/add-expense'),
-        tooltip: 'Add Expense',
+        backgroundColor: Colors.brown.shade700,
         child: const Icon(Icons.add),
       ),
     );
